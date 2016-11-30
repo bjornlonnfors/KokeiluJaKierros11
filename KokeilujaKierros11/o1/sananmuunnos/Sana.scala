@@ -23,6 +23,16 @@ def onVokaali(symboli: Char) = Vokaalit.contains(symboli.toLower)
 
 def onKonsonantti(symboli: Char) = Konsonantit.contains(symboli.toLower)
 
+def onMuuttuvaEtuvokaali(symboli: Char) = MuuttuvatEtuvokaalit.contains(symboli.toLower)
+
+def onMuuttuvaTakavokaali(symboli: Char) = MuuttuvatTakavokaalit.contains(symboli.toLower)
+
+def onMuuttuvaVokaali(symboli: Char) = onMuuttuvaTakavokaali(symboli) || onMuuttuvaEtuvokaali(symboli)
+
+def taakse(symboli: Char) = if (onMuuttuvaEtuvokaali(symboli)) MuuttuvatTakavokaalit(MuuttuvatEtuvokaalit.indexOf(symboli)) else symboli
+
+def eteen(symboli: Char) = if (onMuuttuvaTakavokaali(symboli)) MuuttuvatEtuvokaalit(MuuttuvatTakavokaalit.indexOf(symboli)) else symboli
+
 override def toString  = {
   val uusiSana = Buffer[String]()
   var counter = 0
@@ -36,6 +46,34 @@ override def toString  = {
   }
   uusiSana.mkString("")
 }
+
+
+  def muunnos(tokaSana: Sana): String = {
+    
+   (tokaSana.merkkijono.take(ekaVokaali(tokaSana.merkkijono) + 1). + this.merkkijono.drop(ekaVokaali(this.merkkijono) + 1) + " " 
+       + this.merkkijono.take(ekaVokaali(this.merkkijono) + 1 ).toLowerCase() + tokaSana.merkkijono.drop(ekaVokaali(tokaSana.merkkijono) + 1))
+    
+  }
+  
+  private def ekaVokaali(sana: String): Int = {
+  val vokaali = Buffer[Char]()
+  for(kirjain <- sana){
+    if(vokaali.length == 0 && onVokaali(kirjain)){
+      vokaali += kirjain
+    }
+  }
+  sana.indexOf(vokaali.mkString)
+}
+
+private def jaaSanat(ekaSana: String, tokaSana: String) = {
+  
+  val jaetutSanat = Map[String,String]()
+  
+  
+  
+}
+
+
   
 }
 
@@ -43,8 +81,7 @@ override def toString  = {
 object Sana {
 
   def muunnos(ekaSana: String, tokaSana: String): String = {
-    "kikkelikarva"
-    
+    "Karva"
   }
-  
-}
+    
+}  
