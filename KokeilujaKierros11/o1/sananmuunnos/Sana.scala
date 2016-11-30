@@ -48,10 +48,37 @@ override def toString  = {
 }
 
 
-  def muunnos(tokaSana: Sana): String = {
+  def muunnos(tokaSana: Sana) = {
     
-   (tokaSana.merkkijono.take(ekaVokaali(tokaSana.merkkijono) + 1). + this.merkkijono.drop(ekaVokaali(this.merkkijono) + 1) + " " 
-       + this.merkkijono.take(ekaVokaali(this.merkkijono) + 1 ).toLowerCase() + tokaSana.merkkijono.drop(ekaVokaali(tokaSana.merkkijono) + 1))
+    val ekaEka = tokaSana.merkkijono.take(ekaVokaali(tokaSana.merkkijono) + 1).toLowerCase()
+    val ekaToka = this.merkkijono.drop(ekaVokaali(this.merkkijono) + 1)
+    val tokaEka =  this.merkkijono.take(ekaVokaali(this.merkkijono) + 1 ).toLowerCase()
+    val tokaToka = tokaSana.merkkijono.drop(ekaVokaali(tokaSana.merkkijono) + 1)
+    
+   val lopullinenekaEka = {
+      val loppu = Buffer[String]()
+      if(ekaEka.exists(onMuuttuvaTakavokaali(_))){
+       for(kirjain <- (ekaEka + ekaToka)){
+         loppu += taakse(kirjain).toString
+       }
+       loppu.mkString("")
+    }else if(ekaEka.exists(onMuuttuvaEtuvokaali(_))) {
+      for(kirjain <- (ekaEka + ekaToka)){
+        loppu += taakse(kirjain).toString
+      }
+      loppu.mkString("")
+    }else{
+      ekaEka + tokaEka
+    }
+      
+    }
+    
+      
+    lopullinenekaEka + " " + tokaEka + tokaToka
+    
+    
+    
+        
     
   }
   
@@ -65,13 +92,7 @@ override def toString  = {
   sana.indexOf(vokaali.mkString)
 }
 
-private def jaaSanat(ekaSana: String, tokaSana: String) = {
-  
-  val jaetutSanat = Map[String,String]()
-  
-  
-  
-}
+
 
 
   
