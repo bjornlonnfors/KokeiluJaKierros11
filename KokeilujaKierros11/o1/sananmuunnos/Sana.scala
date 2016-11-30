@@ -37,7 +37,7 @@ override def toString  = {
   val uusiSana = Buffer[String]()
   var counter = 0
   for( kirjain <- merkkijono) {
-    if(onVokaali(kirjain) && counter == 0){
+    if(onVokaali(kirjain) && counter == 0 ){
       uusiSana += s"|$kirjain|"
       counter += 1
     }else{
@@ -47,35 +47,88 @@ override def toString  = {
   uusiSana.mkString("")
 }
 
+   def kategoria(sana: Sana): Boolean = sana.merkkijono(ekaVokaali(sana.merkkijono)) == sana.merkkijono(ekaVokaali(sana.merkkijono) + 1)
+  
 
-  def muunnos(tokaSana: Sana) = {
+
+  private def muunnos(tokaSana: Sana) = {
+    val ensimmainenNumero = ekaVokaali(tokaSana.merkkijono)
+    val toinenNumero = ekaVokaali(this.merkkijono)
     
-    val ekaEka = tokaSana.merkkijono.take(ekaVokaali(tokaSana.merkkijono) + 1).toLowerCase()
-    val ekaToka = this.merkkijono.drop(ekaVokaali(this.merkkijono) + 1)
-    val tokaEka =  this.merkkijono.take(ekaVokaali(this.merkkijono) + 1 ).toLowerCase()
-    val tokaToka = tokaSana.merkkijono.drop(ekaVokaali(tokaSana.merkkijono) + 1)
     
-   val lopullinenekaEka = {
-      val loppu = Buffer[String]()
+    val ekaEka = tokaSana.merkkijono.take(ensimmainenNumero + 1 ).toLowerCase()
+    val ekaToka = this.merkkijono.drop(toinenNumero + 1)
+    val tokaEka =  this.merkkijono.take(toinenNumero + 1).toLowerCase()
+    val tokaToka = tokaSana.merkkijono.drop(ensimmainenNumero + 1)
+    
+
+
+    
+   val melkeinValmisEka = {
+      val loppu = ekaEka.split("").toBuffer
       if(ekaEka.exists(onMuuttuvaTakavokaali(_))){
-       for(kirjain <- (ekaEka + ekaToka)){
+       for(kirjain <- (ekaToka)){
          loppu += taakse(kirjain).toString
        }
        loppu.mkString("")
     }else if(ekaEka.exists(onMuuttuvaEtuvokaali(_))) {
-      for(kirjain <- (ekaEka + ekaToka)){
-        loppu += taakse(kirjain).toString
+      for(kirjain <- (ekaToka)){
+        loppu += eteen(kirjain).toString
       }
       loppu.mkString("")
     }else{
-      ekaEka + tokaEka
+      ekaEka + ekaToka
     }
+    }
+      
+      
+      val valiAikainenToka = {
+        val loppu = tokaEka.split("").toBuffer
+        if(tokaEka.exists(onMuuttuvaTakavokaali(_))){
+          for(kirjain <- (tokaToka)){
+            loppu += taakse(kirjain).toString
+          }
+          loppu.mkString("")
+        
+      }else if(tokaEka.exists(onMuuttuvaEtuvokaali(_))) {
+        for(kirjain <- (tokaToka)) {
+          loppu += eteen(kirjain).toString
+        }
+        loppu.mkString("")
+      }else {
+        tokaEka + tokaToka
+      }
+      
+     
+    
+      
       
     }
     
       
-    lopullinenekaEka + " " + tokaEka + tokaToka
+    val melkeinValmisToka = valiAikainenToka
     
+    melkeinValmisEka + " " + melkeinValmisToka
+   val lopullinenEka = {
+      if(this.kategoria(this)){
+    
+     val valiaikainen = melkeinValmisEka.split("")
+     valiaikainen(ensimmainenNumero + 1) = valiaikainen(ensimmainenNumero)
+     valiaikainen.mkString("")
+    } else
+      melkeinValmisEka
+    }
+    
+    val lopullinenToka  = {
+      if(tokaSana.kategoria(tokaSana)){
+        val valiaikainen = melkeinValmisToka.split("")
+        valiaikainen(toinenNumero + 1) = valiaikainen(toinenNumero )
+        valiaikainen.mkString("")
+      }else
+        melkeinValmisToka
+    }
+    
+    lopullinenEka + " " +  lopullinenToka
     
     
         
@@ -84,17 +137,25 @@ override def toString  = {
   
   private def ekaVokaali(sana: String): Int = {
   val vokaali = Buffer[Char]()
+  
   for(kirjain <- sana){
     if(vokaali.length == 0 && onVokaali(kirjain)){
       vokaali += kirjain
     }
   }
-  sana.indexOf(vokaali.mkString)
-}
-
-
-
-
+  
+ val ekaNumero =  sana.indexOf(vokaali.mkString(""))
+ ekaNumero
+ 
+  /* if(sana(ekaNumero + 1) == sana(ekaNumero)){
+     ekaNumero + 1
+   }else{
+     ekaNumero
+   }
+   * 
+   */
+  
+  }
   
 }
 
@@ -102,7 +163,9 @@ override def toString  = {
 object Sana {
 
   def muunnos(ekaSana: String, tokaSana: String): String = {
-    "Karva"
+    
+    new Sana(ekaSana).muunnos(new Sana(tokaSana))
+    
   }
     
 }  
