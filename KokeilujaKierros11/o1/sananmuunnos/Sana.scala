@@ -34,7 +34,7 @@ def taakse(symboli: Char) = if (onMuuttuvaEtuvokaali(symboli)) MuuttuvatTakavoka
 def eteen(symboli: Char) = if (onMuuttuvaTakavokaali(symboli)) MuuttuvatEtuvokaalit(MuuttuvatTakavokaalit.indexOf(symboli)) else symboli
 
 override def toString  = {
-  val uusiSana = Buffer[String]()
+  /*val uusiSana = Buffer[String]()
   var counter = 0
   for( kirjain <- merkkijono) {
     if(onVokaali(kirjain) && counter == 0 ){
@@ -44,7 +44,21 @@ override def toString  = {
       uusiSana += kirjain.toString()
     }
   }
-  uusiSana.mkString("")
+  * 
+  */
+  val uusiSana = merkkijono.split("").toBuffer
+  val numero = ekaVokaali(merkkijono)
+  if(this.kategoria(this)){
+    uusiSana.insert(numero,"|")
+    uusiSana.insert(numero + 3,"|")
+    uusiSana.mkString("")
+  }else{
+    uusiSana.insert(numero,"|")
+    uusiSana.insert(numero + 2,"|")
+    uusiSana.mkString("")
+    
+  }
+  
 }
 
    def kategoria(sana: Sana): Boolean = sana.merkkijono(ekaVokaali(sana.merkkijono)) == sana.merkkijono(ekaVokaali(sana.merkkijono) + 1)
